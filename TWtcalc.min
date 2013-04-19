@@ -1,3 +1,23 @@
+/***
+|editable|k
+|''Name:''|TWtcalc|
+|''Description:''|A simple spreadsheet for TiddlyWiki|
+|''Author:''|Vincent Yeh (qmo.wcy2@gmail.com)|
+|''Source:''|* (minimized) http://twtable.tiddlyspace.com/#TWtcalc.min <br>* (regular) http://twtable.tiddlyspace.com/#TWtcalc |
+|''Type:''|plugin|
+|''Version:''|0.8.1|
+|''Status:''|This plugin is still under development.<br>You are welcome to try and send feedback. :-)|
+|''Date:''|2012/10/19 released 0.7.0<br>2012/09/04 started from TableCalculator 0.6.14|
+|''License:''|Same as TiddlyWiki|
+|''Core Version:''|2.6.5.|
+|''Needs to have:''|TWtable|
+
+!!Options
+Click the {{{C}}} button for related options.
+***/
+
+// @@display:none;
+//{{{
 version.extensions.TWtcalc={major:0,minor:8,revision:1,date:new Date("2013/04/19")};
 config.macros.TWtcalc={init:function(){void 0===config.options.chkTWtcalcEnabled&&(config.options.chkTWtcalcEnabled=!0);void 0===config.options.chkTWtcalcAllTables&&(config.options.chkTWtcalcAllTables=!1);void 0===config.options.chkTWtcalcThousandSeparated&&(config.options.chkTWtcalcThousandSeparated=void 0===config.options.chkTCalcThousandSeparated?!1:config.options.chkTCalcThousandSeparated);void 0===config.options.txtTWtcalcThousandSeparator&&(config.options.txtTWtcalcThousandSeparator=void 0===
 config.options.txtTCalcThousandSeparator?",":config.options.txtTCalcThousandSeparator);void 0===config.options.txtTWtcalcDecimalMark&&(config.options.txtTWtcalcDecimalMark=void 0===config.options.txtTCalcDecimalMark?".":config.options.txtTCalcDecimalMark);void 0===config.options.chkTWtcalcDebugMode&&(config.options.chkTWtcalcDebugMode=void 0===config.options.chkTCalcDebugMode?!1:config.options.chkTCalcDebugMode);merge(config.optionsDesc,{chkTWtcalcEnabled:"Enable TWtcalc",chkTWtcalcAllTables:'Calculate all tables. Otherwise only calculate tables with class "spreadsheet"',
@@ -43,3 +63,5 @@ npt:0,sum:0,start_parsing:function(){this.data||(this.data=[]);this.npt=this.sum
 a;}}},{name:["COLUMN","COL"],no_eval:!0,no_deref:!0,col:null,start_parsing:function(){this.col=null},stop_parsing:function(){if(!this.col){var a=TWtcalc.cells_being_evaluated;this.col=TWtcalc.reference_to_index_col(a[a.length-1][0].title)}return""+this.col},parse_single_term:function(a){this.col||(this.col=TWtcalc.reference_to_index_col(a))}},{name:"ROWS",no_eval:!0,no_deref:!0,rows:0,start_parsing:function(){this.rows=0},stop_parsing:function(){return""+this.rows},parse_single_term:function(a){a=
 a.split(":");switch(a.length){case 1:this.rows++;break;case 2:var b=TWtcalc.reference_to_index_row(a[0]),a=TWtcalc.reference_to_index_row(a[1]);this.rows+=a-b+1;break;default:throw"Syntax error: "+a;}}},{name:"ROW",no_eval:!0,no_deref:!0,row:null,start_parsing:function(){this.row=null},stop_parsing:function(){if(!this.row){var a=TWtcalc.cells_being_evaluated;this.row=TWtcalc.reference_to_index_row(a[a.length-1][0].title)}return""+this.row},parse_single_term:function(a){this.row||(this.row=TWtcalc.reference_to_index_row(a))}},
 {name:"IF",no_eval:!0,args:null,start_parsing:function(){args=[]},stop_parsing:function(){return args[0]?args[1]:args[2]},parse_single_term:function(a,b){switch(args.length){case 2:case 1:var e=a.substring(0,b);args.push(e+eval(a.substring(b)));break;case 0:args.push(eval(a))}}}]};
+//}}}
+// @@
