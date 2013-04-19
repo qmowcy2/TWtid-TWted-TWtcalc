@@ -28,3 +28,6 @@ With the table calculator one can
 * use any of the predefined functions (currently ~20 and growing);
 * define your own function (in Javascript).
 
+進一步細節請參考完整版程式檔案及其它說明文件。
+
+For further information please find the regular version of the code files and the documentation.
