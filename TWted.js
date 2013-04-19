@@ -8,7 +8,7 @@
 |''Author:''|Vincent Yeh (qmo.wcy2@gmail.com)|
 |''Source:''|* (minimized) http://twtable.tiddlyspace.com/#TWted.min <br>* (regular) http://twtable.tiddlyspace.com/#TWted |
 |''Type:''|plugin|
-|''Version:''|1.6.2|
+|''Version:''|1.6.3|
 |''Status:''|This plugin is still under development.<br>You are welcome to try and send feedback. :-)|
 |''Date:''|2012/10/19 released 1.4.0<br>2012/09/04 started from TableEditor 1.3.0|
 |''License:''|Same as TiddlyWiki|
@@ -54,7 +54,9 @@ Click the {{{C}}} button for related options.
 !!Todo:
 
 !!!Revision history
-* 2013/04/18 [1.6.2]
+* 2013/04/20 [1.6.3]
+** Minor bug fixes.
+* 2013/04/19 [1.6.2]
 ** Bug fixes for options panel.
 * 2013/04/15 [1.6.1]
 ** Bug fixes for editing list items.
@@ -172,10 +174,10 @@ Click the {{{C}}} button for related options.
 
 // //Macro definitions
 //{{{
-version.extensions.TWted= {major: 1, minor: 6, revision: 2, date: new Date('2013/04/19')};
+version.extensions.TWted= {major: 1, minor: 6, revision: 3, date: new Date('2013/04/20')};
 
 config.macros.noedit={
-  handler : function(place){
+	handler : function(place){
 		addClass(place,"noedit");
 	}
 };
