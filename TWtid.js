@@ -2872,9 +2872,7 @@ TWtid = {
 		TWtid.$cur_block = null;
 		var esize = $elem ? $elem.size() : 0;
 		if ( readOnly || esize == 0 || action == 'off'
-				|| (esize==1
-						&& $elem.is('.tabset,.toolbar,.subtitle,.tiddler'
-										+'.tagged,.tagInfo,.tidTags'))
+				|| (esize==1 && $elem.is('.tabset'))
 			)
 			return false;
 
@@ -3110,8 +3108,13 @@ TWtid = {
 		}
 		return false;
 	},
+	system_block : function($elem) {
+		return $elem.is('.toolbar,.subtitle,.tiddler'
+								+',.tagged,.tagInfo,.tidTags');
+	},
 	block_element : function ($elem,ev) {
 		// Find the block element that contains this $elem.
+		if ( this.system_block($elem) ) return null;
 		var $blk = null;
 		if ( TWtid.is_wrapper($elem) ) {
 //displayMessage('elem '+$elem[0].nodeName+' is a wrapper');
@@ -3163,7 +3166,9 @@ TWtid = {
 				$blks = TWtid.closest_blocks($blk,ev);
 			return $blks ? $blks : $blk;
 		}
-		return $blk.size() > 0 ? $blk : null;
+		return $blk.size() > 0
+					? (this.system_block($blk)?null:$blk)
+					: null;
 	},
 
 	apparent_dim : function ($elem) {
