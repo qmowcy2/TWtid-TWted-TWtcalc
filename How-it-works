@@ -1,6 +1,6 @@
-! Editing Wiki Text in the View Mode
+# Editing Wiki Text in the View Mode
 TWtid+TWted is a combination of plugins that gives you the possibility to edit wiki text in the view mode.
-!! Why?
+## Why?
 
 >''Can't find the text!''
 
@@ -27,7 +27,7 @@ Personally I think many wiki lovers are attracted to it for this simplicity. At 
 
 I needed an easier way to edit tables in a large tiddler!
 
-!! What?
+## What?
 
 > ''Edit where I can see it.''
 
@@ -38,7 +38,7 @@ Some people might say:
 That's all right. But that was old thought. If your car can run 300 km/hr, would you be happy to drive it at 50 in the city, or to create a place that you can enjoy the speed?
 >Besides, cutting a large tiddler could end up with too many small tiddlers, which could bring me another problem: I would need to edit a lot of small tiddlers just to finish one task. Worse yet, that could bring me back to the same situation: I couldn't find the text to edit!
 
-!! How?
+## How?
 
 > ''Find the missing half!''
 
