@@ -29,5 +29,7 @@ With the table calculator one can
 * define your own function (in Javascript).
 
 進一步細節請參考完整版程式檔案及其它說明文件。
+有關 TiddlyWiki 及其說明請參考官方網站 http://tiddlywiki.com/。
 
 For further information please find the regular version of the code files and the documentation.
+For TiddlyWiki and its documentation please find the official cite http://tiddlywiki.com/.
