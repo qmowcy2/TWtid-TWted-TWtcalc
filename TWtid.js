@@ -8,7 +8,7 @@
 |''Author:''|Vincent Yeh (qmo.wcy2@gmail.com)|
 |''Source:''|* (minimized) http://twtable.tiddlyspace.com/#TWtid.min <br>* (regular) http://twtable.tiddlyspace.com/#TWtid|
 |''Type''|plugin|
-|''Version:''|1.6.2|
+|''Version:''|1.6.3|
 |''Status:''|This plugin is still under development.<br>You are welcome to try and send feedback. :-)|
 |''Date:''|2012/10/19 released 1.4.0<br>2012/09/04 started from TableEditor 1.3.0|
 |''License:''|Same as TiddlyWiki|
@@ -44,7 +44,9 @@ Click the {{{C}}} button for related options.
 !!Example:
 
 !!!Revision history
-* 2013/04/18 [1.6.2]
+* 2013/04/20 [1.6.3]
+** Bug fixes for the flying borders.
+* 2013/04/19 [1.6.2]
 ** Bug fixes for incorrect list item identification.
 *** The {{{tag labels}}} of a tiddler are displayed as __list items__ in the small {{{tags:}}} box at the top-right corner of a tiddler. These are affecting the identification of the list items in the tiddler content. ''Fixed by removing them in the searching codes''.
 ** Supports for IE10.
@@ -143,11 +145,11 @@ such as the TWtid configuration popup.
 ***/
 
 //{{{
-config.extensions.TWtid = {major: 1, minor: 6, revision: 2, date: new Date('2013/04/19')};
+config.extensions.TWtid = {major: 1, minor: 6, revision: 3, date: new Date('2013/04/20')};
 
 // Macro for initialization
 config.macros.TWtid = {
-  init: function(){
+	init: function(){
 		if ( config.options.chkTWtidEnabled===undefined )
 			config.options.chkTWtidEnabled =
 				(config.options.chkTWtableEnabled===undefined ? true
@@ -2797,21 +2799,26 @@ TWtid = {
 			eh = $elem.innerHeight();
 		} else {
 			var $parent = jQuery($elem[2]);
-			var $next = jQuery($elem[1]);
-			pos.left = TWtid.element_offset($parent).left;
+			var ppos = TWtid.element_offset($parent);
 			ew = $parent.innerWidth();
-			eh = $prev.outerHeight();
+			pos.left = ppos.left;
+			if ( jQuery.contains($parent[0],$prev[0]) ) {
+				eh = $prev.outerHeight();
+			} else {
+				pos.top = ppos.top;
+				eh = 0;
+			}
 			pos.top += (eh+4);
+			var $next = jQuery($elem[1]);
 			if ( jQuery.contains($parent[0],$next[0]) ) {
 				if ( $next.is('table') )
 					$next = $next.closest('.tedTable');
 				eh=TWtid.element_offset($next).top-pos.top-4;
 			} else {
-				eh=TWtid.element_offset($parent).top
-					+$parent.height()-pos.top+4;
+				eh=ppos.top+$parent.height()-pos.top+4;
 			}
 		}
-//displayMessage('element_box('+pos.left+','+pos.top+')-('+ew+','+eh+')');
+//displayMessage($elem.size()+' element_box('+pos.left+','+pos.top+')-('+ew+','+eh+')');
 		return	{
 					'left':pos.left,
 					'top':pos.top,
@@ -2866,19 +2873,19 @@ TWtid = {
 		var esize = $elem ? $elem.size() : 0;
 		if ( readOnly || esize == 0 || action == 'off'
 				|| (esize==1
-					&& ($elem.is('.tabset')
-						|| $elem.prev().is('.title')))
+						&& $elem.is('.tabset,.toolbar,.subtitle,.tiddler'
+										+'.tagged,.tagInfo,.tidTags'))
 			)
 			return false;
 
 		var $w = (esize==1 && $elem.is('table'))
 					? $elem.closest('.tedTable') : $elem;
 		var eb = TWtid.element_box($w);
-		var lh = TWtid.css_size('line-height',$elem);
+		var lh = TWtid.css_size('font-size',$elem);
 //displayMessage('$elem[0].classes='+TWtid.element_classes(jQuery($elem[0])));
 //if(esize>1)displayMessage('$elem[1].classes='+TWtid.element_classes(jQuery($elem[1])));
+//displayMessage('eb=('+eb.left+','+eb.top+')-('+eb.width+','+eb.height+')'+' lh='+lh);
 		if ( eb.height >= lh && eb.top > lh && eb.left > lh ) {
-//displayMessage('eb=('+eb.left+','+eb.top+')-('+eb.width+','+eb.height+')');
 			TWtid.$cur_block = $elem;
 			TWtid.$border_up.css({
 				'left':eb.left
@@ -2904,21 +2911,7 @@ TWtid = {
 		}
 		return false;
 	},
-	/*
-	pre_elementFromPoint : null,
-	elementFromPoint : function() {
-		// This function replaces the default document.elementFromPoint()
-		// in that it pasees through the TWtid.$border. The solution is
-		// found at http://stackoverflow.com/questions/1009753/pass-mouse-events-through-absolutely-positioned-element.
-		var elem=TWtid.pre_elementFromPoint.apply(this,arguments);
-		if ( TWtid.$border && TWtid.$border[0] == elem ) {
-			TWtid.$border.hide();
-			elem=TWtid.pre_elementFromPoint.apply(this,arguments);
-			TWtid.$border.show();
-		}
-		return elem;
-	},
-	*/
+
 	mousemove : function(ev) {
 		ev = ev || window.event;
 		var $elem = jQuery(
@@ -2963,15 +2956,11 @@ TWtid = {
 		}
 		if ( ! TWtid.inactive_elem($elem) ) {
 			var $blk = TWtid.block_element($elem,ev);
-//displayMessage('$elem[0]='+$elem[0].nodeName+' $blk[0]='+$blk[0].nodeName+($blk.size()>1?' $blk[1]='+$blk[1].nodeName:''));
-			if ( ! $blk || $blk.is('[id^=tiddler]')
-					|| $blk.next().is('.title') ) {
-//displayMessage('off');
+			if ( ! $blk ) {
 				TWtid.focus();
-			} else if ( $blk
-						&& (! TWtid.$cur_block
-								|| $blk[0] != TWtid.$cur_block[0]) ) {
-//displayMessage($blk[0].nodeName+' classes='+TWtid.element_classes($blk)+' attributes='+TWtid.element_attributes($blk));
+			} else if ( ! TWtid.$cur_blk
+								|| TWtid.$cur_blk[0] != $blk[0] ) {
+//displayMessage('$elem[0]='+$elem[0].nodeName+' ('+TWtid.element_classes($elem)+') $blk[0]='+$blk[0].nodeName+' ('+TWtid.element_classes(jQuery($blk[0]))+')'+($blk.size()>2?(' $blk[1]='+$blk[1].nodeName+' ('+TWtid.element_classes(jQuery($blk[1]))+')'+' $blk[2]='+$blk[2].nodeName+' ('+TWtid.element_classes(jQuery($blk[2]))+')'):''));
 				TWtid.focus($blk,'on');
 			}
 		}
@@ -3061,9 +3050,8 @@ TWtid = {
 		return config.options.chkTWtidEnabled;
 	},
 
-	closest_block : function ($elem,ev,lh) {
+	closest_block : function ($elem,eb,ev,lh) {
 		var x = ev.clientX, y = ev.clientY + lh, e;
-		var eb = TWtid.element_box($elem);
 		var ystop = lh < 0
 						? 0 //eb.top
 						: (eb.top+eb.height);
@@ -3091,19 +3079,10 @@ TWtid = {
 		var lh = TWtid.css_size('line-height',$elem);
 		// Find the previous and next block elements.
 		var blk = new Array();
-		blk[0] = TWtid.closest_block($elem,ev,-lh)[0];
-		blk[1] = TWtid.closest_block($elem,ev,lh)[0];
+		var eb = TWtid.element_box($elem);
+		blk[0] = TWtid.closest_block($elem,eb,ev,-lh)[0];
+		blk[1] = TWtid.closest_block($elem,eb,ev,lh)[0];
 		blk[2] = $elem[0];
-		/*
-		if ( blk[0] ) {
-			// Prev is found.
-			if ( ! blk[1] ) {
-				// Next is not found.
-				blk[1] = blk[0].nextSibling;
-				if ( ! blk[1] ) blk[1] = $elem[0];
-			}
-		}
-		*/
 		return (jQuery.contains($elem[0],blk[0])
 				|| jQuery.contains($elem[0],blk[1]))
 					? jQuery(blk)
@@ -3114,7 +3093,8 @@ TWtid = {
 		// Check if this $elem is a block element.
 		switch ( $elem[0].nodeName ) {
 			case 'DIV' :
-				return $elem.is('.title,.tabset');
+				//return $elem.is('.title,.tabset');
+				return true;
 			case 'TABLE' :
 				return true;
 			case 'LI' :
